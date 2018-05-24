@@ -14,14 +14,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import hello.storage.StorageFileNotFoundException;
 import hello.storage.StorageService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
 @Controller
@@ -53,15 +56,24 @@ public class FileUploadController {
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
-    @RequestMapping(
-            value = "/process",
-            method = RequestMethod.POST)
-    public ResponseEntity<Resource> serveFile2(@RequestBody String path2) {
-
-        Resource file = storageService.loadAsResource(path2);
+    @GetMapping("/files2/{filename}/**")
+    @ResponseBody
+    public ResponseEntity<Resource> serveFile2(@PathVariable String filename,HttpServletRequest request) {
+        String fileName=extractFilePath(request);
+        fileName="/"+filename+"/"+fileName;
+        Resource file = storageService.loadAsResource2(fileName);
         final byte[] requestContent;
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
+    private static String extractFilePath(HttpServletRequest request) {
+        String path = (String) request.getAttribute(
+                HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String bestMatchPattern = (String) request.getAttribute(
+                HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+        AntPathMatcher apm = new AntPathMatcher();
+        return apm.extractPathWithinPattern(bestMatchPattern, path);
     }
 
 

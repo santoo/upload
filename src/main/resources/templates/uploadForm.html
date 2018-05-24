@@ -73,7 +73,7 @@
                         if(e.type === "directory"){
                             $("#list").append("<li path="+e.path+" onclick='tst(this)'>"+e.name+" [Dir]</li>");
 						}else if(e.type === "file") {
-                            $("#list").append("<li path="+e.path+" onclick='downloadFile(this)'>"+e.name+"</li>");
+                            $("#list").append("<li><a href='files2/"+e.path+"'> "+e.name+"</a></li>");
 						}
 
                         //console.log(e)
