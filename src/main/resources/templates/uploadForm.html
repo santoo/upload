@@ -3,6 +3,11 @@
 	<link th:rel="stylesheet" th:href="@{css/bootstrap.min.css}">
 	<script th:src="@{js/jquery-3.3.1.min.js}" type="application/javascript"></script>
 	<script th:src="@{js/bootstrap.min.js}" type="application/javascript"></script>
+    <style>
+        li {
+            padding: 7px;
+        }
+    </style>
 </header>
 <body>
 
@@ -17,6 +22,11 @@
 				<tr><td></td><td><input type="submit" value="Upload" /></td></tr>
 			</table>
 		</form>
+
+        <form method="POST" action="/process"name="path2form" id="path2form">
+            <input type="hidden" name="sss" id="path2" value="">
+            <input type="submit" id="path3" value="path" />
+        </form>
 	</div>
 
 	<div>
@@ -27,28 +37,47 @@
 		</ul>
 		<div class="container">
 			<div class="col-lg-12 col-md-12">
-				<input type="text" name="" id="" class="form-control"><button class="btn btn-dark">Go</button>
+				<input type="text" name="" id="path-val" value="/home/santoo/" class="form-control"><button class="btn btn-dark"onclick="tst()">Go</button>
 			</div>
 			<br><br>
 			<span>/home/santoo/</span>
 			<div class="col-lg-12 col-md-12" style="border: black 1px solid">
-				<ul>
-					<li>hello</li>
-					<li>hai</li>
-					<li>bye</li>
+				<ul id="list">
+
 				</ul>
 			</div>
 		</div>
 	</div>
 	<script>
-        function  tst() {
-            var path="/home/santoo/"//$("#path").val();
+
+        function downloadFile(obj){
+            var path=$(obj).attr("href");
+            $("#path2").val(path)
+            $("#path2form").submit();
+
+        }
+        function  tst(obj) {
+            var path="/"
+            if(obj === undefined){
+                path=$("#path-val").val();
+            }else {
+                path =$(obj).attr("path")
+            }
+
             $.ajax({
                 url:"/listFiles",
                 data:{path:path},
                 success:function (resposne) {
-                    $("#filestr").html(resposne);
-                    alert(resposne)
+                    $("#list").html("");
+                    resposne.forEach(function(e){
+                        if(e.type === "directory"){
+                            $("#list").append("<li path="+e.path+" onclick='tst(this)'>"+e.name+" [Dir]</li>");
+						}else if(e.type === "file") {
+                            $("#list").append("<li path="+e.path+" onclick='downloadFile(this)'>"+e.name+"</li>");
+						}
+
+                        //console.log(e)
+                    });
                 } ,
                 error:function (e) {
                     alert(e);
