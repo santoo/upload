@@ -1,4 +1,9 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<header>
+	<link th:rel="stylesheet" th:href="@{css/bootstrap.min.css}">
+	<script th:src="@{js/jquery-3.3.1.min.js}" type="application/javascript"></script>
+	<script th:src="@{js/bootstrap.min.js}" type="application/javascript"></script>
+</header>
 <body>
 
 	<div th:if="${message}">
@@ -20,7 +25,36 @@
 				<a th:href="${file}" th:text="${file}" />
 			</li>
 		</ul>
+		<div class="container">
+			<div class="col-lg-12 col-md-12">
+				<input type="text" name="" id="" class="form-control"><button class="btn btn-dark">Go</button>
+			</div>
+			<br><br>
+			<span>/home/santoo/</span>
+			<div class="col-lg-12 col-md-12" style="border: black 1px solid">
+				<ul>
+					<li>hello</li>
+					<li>hai</li>
+					<li>bye</li>
+				</ul>
+			</div>
+		</div>
 	</div>
-
+	<script>
+        function  tst() {
+            var path="/home/santoo/"//$("#path").val();
+            $.ajax({
+                url:"/listFiles",
+                data:{path:path},
+                success:function (resposne) {
+                    $("#filestr").html(resposne);
+                    alert(resposne)
+                } ,
+                error:function (e) {
+                    alert(e);
+                }
+            });
+        }
+	</script>
 </body>
 </html>
